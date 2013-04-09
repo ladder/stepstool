@@ -33,14 +33,14 @@ JSON responses for each file uploaded will be sent to the terminal.
 
 ## Upload Options
 
-* **Threads**: StepStool will use multiple threads to improve processing performance, at the cost of increased network traffic and load on the Ladder server.  By default, it will use the same number of threads as virtual CPU cores. Note that under MRI this will *not* use multiple cores.
+* **Threads**: StepStool will use multiple threads to improve processing performance, at the cost of increased network traffic and load on the Ladder server.  By default, it will use the same number of threads as virtual CPU cores. Note that under MRI this will **not** use multiple cores.
 
 * **Compress**: Enable client-side compression to reduce the amount of data actually sent to the server.  By default, three options are available:
-    1. `:gzip`: Slowest but best compression ratio.  This uses Ruby's built-in ZLib.
-	2. `:lz4`: Balance between speed and compression.  This requires the LZ4 gem to be installed (included by default).
-	3. `:snappy`: Fastest at the expense of least compression.  This requires the Snappy gem to be installed (included by default).
+    1. `gzip`: Slowest but best compression ratio.  This uses Ruby's built-in ZLib.
+	2. `lz4`: Balance between speed and compression.  This requires the LZ4 gem to be installed (included by default).
+	3. `snappy`: Fastest at the expense of least compression.  This requires the Snappy gem to be installed (included by default).
 
-  Note that both `:lz4` and `:snappy` gems use C bindings, so may not work under JRuby, depending on your version and settings.
+  Note that both `lz4` and `snappy` gems use C bindings, so may not work under JRuby, depending on your version and settings.
 
 * **Map**: Tells Ladder to queue the uploaded file for mapping once it has completed uploading.  Depending on the size and complexity of the file, this may take a long time.  Ladder will return a `HTTP 202: Accepted` header to indicate that extended processing has started.
 
@@ -48,4 +48,4 @@ JSON responses for each file uploaded will be sent to the terminal.
 
 * Gemify
 * Add more endpoints
-* Kill MARC once and for all, and user in a golden age of library metadata
+* Kill MARC once and for all, and usher in a golden age of library metadata
