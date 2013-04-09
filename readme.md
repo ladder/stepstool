@@ -49,3 +49,5 @@ JSON responses for each file uploaded will be sent to the terminal.
 * Gemify
 * Add more endpoints
 * Kill MARC once and for all, and usher in a golden age of library metadata
+
+!(https://raw.github.com/deliberatedata/stepstool/master/stepstool.png)
