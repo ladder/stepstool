@@ -50,4 +50,4 @@ JSON responses for each file uploaded will be sent to the terminal.
 * Add more endpoints
 * Kill MARC once and for all, and usher in a golden age of library metadata
 
-!(https://raw.github.com/deliberatedata/stepstool/master/stepstool.png)
+[](https://raw.github.com/deliberatedata/stepstool/master/stepstool.png)
