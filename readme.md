@@ -1,5 +1,7 @@
 # StepStool
 
+![StepStool](https://raw.github.com/deliberatedata/stepstool/master/stepstool.png)
+
 StepStool is a simple REST client for interacting with [Ladder](http://www.deliberatedata.com/). StepStool uses [Thor](https://github.com/wycats/thor) to act like a typical Unix command.
 
 ## Installation
@@ -49,5 +51,3 @@ JSON responses for each file uploaded will be sent to the terminal.
 * Gemify
 * Add more endpoints
 * Kill MARC once and for all, and usher in a golden age of library metadata
-
-![StepStool](https://raw.github.com/deliberatedata/stepstool/master/stepstool.png)
