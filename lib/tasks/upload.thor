@@ -10,8 +10,8 @@ class Upload < Thor
   class_option :map, :aliases => '-m', :banner => true, :desc => 'Queue files for mapping after uploading'
 
   desc "auto URL PATH", "Upload files using auto-detection based on MIME-type"
-
   def auto(url, path)
+    check_compression if options['compress']
     files = resolve_files(path)
     url = compose_url(url)
 
@@ -31,8 +31,8 @@ class Upload < Thor
   end
 
   desc "marc URL PATH", "Upload MARC files"
-
   def marc(url, path)
+    check_compression if options['compress']
     files = resolve_files(path)
     url = compose_url(url)
 
@@ -43,10 +43,11 @@ class Upload < Thor
       records = MARC::ForgivingReader.new(file_name, :invalid => :replace)
 
       Parallel.each(records, :in_threads => options[:threads]) do |marc_record|
-        # POST to Ladder as MARCHASH
-        json = marc_record.to_marchash.to_json
+        # compress data if specified
+        data = options[:compress] ? Compressor.compress(marc_record.to_marchash.to_json, options[:compress].to_sym) : marc_record.to_marchash.to_json
 
-        response = RestClient.post url, json, :content_type => 'application/marc+json'
+        # POST to Ladder as MARCHASH
+        response = RestClient.post url, data, :content_type => 'application/marc+json'
 
         puts "#{response.code} : #{response.body}"
       end
@@ -54,8 +55,8 @@ class Upload < Thor
   end
 
   desc "marcxml URL PATH", "Upload MARCXML files"
-  method_option :map
   def marcxml(url, path)
+    check_compression if options['compress']
     files = resolve_files(path)
     url = compose_url(url)
 
@@ -65,10 +66,11 @@ class Upload < Thor
       records = MARC::XMLReader.new(file_name, :parser => :nokogiri)
 
       Parallel.each(records, :in_threads => options[:threads]) do |marc_record|
-        # POST to Ladder as MARCHASH
-        json = marc_record.to_marchash.to_json
+        # compress data if specified
+        data = options[:compress] ? Compressor.compress(marc_record.to_marchash.to_json, options[:compress].to_sym) : marc_record.to_marchash.to_json
 
-        response = RestClient.post url, json, :content_type => 'application/marc+json'
+        # POST to Ladder as MARCHASH
+        response = RestClient.post url, data, :content_type => 'application/marc+json'
 
         puts "#{response.code} : #{response.body}"
       end
@@ -76,23 +78,26 @@ class Upload < Thor
   end
 
   desc "marchash URL PATH", "Upload MARCHASH (JSON) files"
-
   def marchash(url, path)
+    check_compression if options['compress']
     files = resolve_files(path)
     url = compose_url(url)
 
     files.each do |file_name|
       puts "==== Processing MARCHASH (JSON) file: #{file_name}"
 
-      response = RestClient.post url, File.read(file_name), :content_type => 'application/marc+json'
+      # compress data if specified
+      data = options[:compress] ? Compressor.compress(File.read(file_name), options[:compress].to_sym) : File.read(file_name)
+
+      response = RestClient.post url, data, :content_type => 'application/marc+json'
 
       puts "#{response.code} : #{response.body}"
     end
   end
 
   desc "modsxml URL PATH", "Upload MODSXML files"
-
   def modsxml(url, path)
+    check_compression if options['compress']
     files = resolve_files(path)
     url = compose_url(url)
 
@@ -103,8 +108,11 @@ class Upload < Thor
       records = Nokogiri::XML(File.read(file_name)).remove_namespaces!.xpath('//mods') # TODO: smarter namespace handling
 
       Parallel.each(records, :in_threads => options[:threads]) do |mods_record|
+        # compress data if specified
+        data = options[:compress] ? Compressor.compress(mods_record.to_xml, options[:compress].to_sym) : mods_record.to_xml
+
         # POST to Ladder as MODSXML
-        response = RestClient.post url, mods_record.to_xml, :content_type => 'application/mods+xml'
+        response = RestClient.post url, data, :content_type => 'application/mods+xml'
 
         puts "#{response.code} : #{response.body}"
       end
@@ -142,9 +150,18 @@ class Upload < Thor
   def compose_url(url)
     abort "Invalid URL: #{url}" unless validate_url(url)
 
+    query = {}
+    query['map'] = 'true' if options['map']
+    query['compression'] = options['compress'] if options['compress']
+
     uri = URI(url)
     uri.path = '/files'
-    uri.query = URI.encode_www_form('map' => 'true') if options['map']
+    uri.query = URI.encode_www_form(query)
     uri.to_s
+  end
+
+  # ensure that a valid compression type is chosen
+  def check_compression
+    abort "Invalid compression type: #{options['compress']}" unless Compressor.compression_types.include? options['compress'].to_sym
   end
 end
