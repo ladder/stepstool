@@ -5,6 +5,7 @@ Bundler.require(:default)
 require File.expand_path("../../compressor.rb", __FILE__)
 
 class Upload < Thor
+  class_option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   class_option :threads, :aliases => '-t', :default => Parallel.processor_count, :desc => 'Number of threads to use for processing'
   class_option :compress, :aliases => '-c', :banner => Compressor.compression_types.map(&:to_s), :desc => 'Compress files before sending'
   class_option :map, :aliases => '-m', :banner => true, :desc => 'Queue files for mapping after uploading'
@@ -47,11 +48,11 @@ class Upload < Thor
         data = options[:compress] ? Compressor.compress(marc_record.to_marchash.to_json, options[:compress].to_sym) : marc_record.to_marchash.to_json
 
         # POST to Ladder as MARCHASH
-        response = RestClient.post url, data, :content_type => 'application/marc+json'
-
-        puts "#{response.code} : #{response.body}"
+        puts RestClient.post url, data, :content_type => 'application/marc+json'
       end
     end
+  rescue => err
+    p err
   end
 
   desc "marcxml URL PATH", "Upload MARCXML files"
@@ -70,11 +71,11 @@ class Upload < Thor
         data = options[:compress] ? Compressor.compress(marc_record.to_marchash.to_json, options[:compress].to_sym) : marc_record.to_marchash.to_json
 
         # POST to Ladder as MARCHASH
-        response = RestClient.post url, data, :content_type => 'application/marc+json'
-
-        puts "#{response.code} : #{response.body}"
+        puts RestClient.post url, data, :content_type => 'application/marc+json'
       end
     end
+  rescue => err
+    p err
   end
 
   desc "marchash URL PATH", "Upload MARCHASH (JSON) files"
@@ -89,10 +90,10 @@ class Upload < Thor
       # compress data if specified
       data = options[:compress] ? Compressor.compress(File.read(file_name), options[:compress].to_sym) : File.read(file_name)
 
-      response = RestClient.post url, data, :content_type => 'application/marc+json'
-
-      puts "#{response.code} : #{response.body}"
+      puts RestClient.post url, data, :content_type => 'application/marc+json'
     end
+  rescue => err
+    p err
   end
 
   desc "modsxml URL PATH", "Upload MODSXML files"
@@ -112,11 +113,11 @@ class Upload < Thor
         data = options[:compress] ? Compressor.compress(mods_record.to_xml, options[:compress].to_sym) : mods_record.to_xml
 
         # POST to Ladder as MODSXML
-        response = RestClient.post url, data, :content_type => 'application/mods+xml'
-
-        puts "#{response.code} : #{response.body}"
+        puts RestClient.post url, data, :content_type => 'application/mods+xml'
       end
     end
+  rescue => err
+    p err
   end
 
   private
@@ -152,6 +153,7 @@ class Upload < Thor
 
     query = {}
     query['map'] = 'true' if options['map']
+    query['api_key'] = options['key'] if options['key']
     query['compression'] = options['compress'] if options['compress']
 
     uri = URI(url)
