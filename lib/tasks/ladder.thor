@@ -2,9 +2,8 @@
 Bundler.require(:default)
 
 class Ladder < Thor
-  class_option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
-
   desc "ping URL", "Ping a Ladder instance"
+  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   def ping(url)
     puts RestClient.get compose_url(url)
   rescue => err
@@ -12,6 +11,7 @@ class Ladder < Thor
   end
 
   desc "destroy URL", "Delete and (re)initialize a Ladder instance"
+  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   def destroy(url)
     puts RestClient.delete compose_url(url)
   rescue => err

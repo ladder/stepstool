@@ -5,12 +5,12 @@ Bundler.require(:default)
 require File.expand_path("../../compressor.rb", __FILE__)
 
 class Upload < Thor
-  class_option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   class_option :threads, :aliases => '-t', :default => Parallel.processor_count, :desc => 'Number of threads to use for processing'
   class_option :compress, :aliases => '-c', :banner => Compressor.compression_types.map(&:to_s), :desc => 'Compress files before sending'
   class_option :map, :aliases => '-m', :banner => true, :desc => 'Queue files for mapping after uploading'
 
   desc "auto URL PATH", "Upload files using auto-detection based on MIME-type"
+  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   def auto(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
@@ -32,6 +32,7 @@ class Upload < Thor
   end
 
   desc "marc URL PATH", "Upload MARC files"
+  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   def marc(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
@@ -79,6 +80,7 @@ class Upload < Thor
   end
 
   desc "marchash URL PATH", "Upload MARCHASH (JSON) files"
+  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   def marchash(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
@@ -97,6 +99,7 @@ class Upload < Thor
   end
 
   desc "modsxml URL PATH", "Upload MODSXML files"
+  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
   def modsxml(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
