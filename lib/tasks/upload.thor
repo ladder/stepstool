@@ -10,7 +10,7 @@ class Upload < Thor
   class_option :map, :aliases => '-m', :banner => true, :desc => 'Queue files for mapping after uploading'
 
   desc "auto URL PATH", "Upload files using auto-detection based on MIME-type"
-  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
+  option :key, :required => true, :aliases => '-k', :banner => 'your_api_key', :desc => 'Ladder API key'
   def auto(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
@@ -32,7 +32,7 @@ class Upload < Thor
   end
 
   desc "marc URL PATH", "Upload MARC files"
-  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
+  option :key, :required => true, :aliases => '-k', :banner => 'your_api_key', :desc => 'Ladder API key'
   def marc(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
@@ -80,7 +80,7 @@ class Upload < Thor
   end
 
   desc "marchash URL PATH", "Upload MARCHASH (JSON) files"
-  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
+  option :key, :required => true, :aliases => '-k', :banner => 'your_api_key', :desc => 'Ladder API key'
   def marchash(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
@@ -99,7 +99,7 @@ class Upload < Thor
   end
 
   desc "modsxml URL PATH", "Upload MODSXML files"
-  option :key, :required => true, :aliases => '-k', :banner => true, :desc => 'Ladder API key'
+  option :key, :required => true, :aliases => '-k', :banner => 'your_api_key', :desc => 'Ladder API key'
   def modsxml(url, path)
     check_compression if options['compress']
     files = resolve_files(path)
