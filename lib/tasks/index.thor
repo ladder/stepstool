@@ -22,7 +22,7 @@ class Index < Thor
   desc "reindex URL", "Rebuild a search index"
   option :key, :required => true, :aliases => '-k', :banner => 'your_api_key', :desc => 'Ladder API key'
   def reindex(url)
-    puts RestClient.put compose_url(url, '/search/reindex/'), nil
+    puts RestClient.put compose_url(url), nil
   rescue => err
     p err
   end
